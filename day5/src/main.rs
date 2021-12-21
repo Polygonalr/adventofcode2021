@@ -5,14 +5,14 @@ use std::collections::{HashSet, HashMap};
 
 mod line;
 
-pub use crate::line::line::Line;
+pub use crate::line::Line;
 
 // Overcomplicated O(nlogn) but memory efficient solution which computes the overlapping points only
 fn p1(line_vec: Vec<String>) -> i32 {
     // replace all the line's ' -> ' to ',' and then split with ','
     let new_line_vec: Vec<Vec<String>> = line_vec.iter()
         .map(|x| x.replace(" -> ", ",")
-        .split(",")
+        .split(',')
         .map(|x| x.to_owned()).collect())
         .collect();
     // convert to Vec<Vec<i32>> and filter only horizontal or vertical lines
@@ -41,7 +41,7 @@ fn p2(line_vec: Vec<String>) -> i32 {
     // replace all the line's ' -> ' to ',' and then split with ','
     let new_line_vec: Vec<Vec<String>> = line_vec.iter()
         .map(|x| x.replace(" -> ", ",")
-        .split(",")
+        .split(',')
         .map(|x| x.to_owned()).collect())
         .collect();
     // convert to Vec<Vec<i32>>
@@ -71,11 +71,9 @@ fn main() {
     // let mut str_buf = "".to_owned();
     let mut line_vec: Vec<String> = Vec::new();
     if let Ok(lines) = read_lines(filepath) {
-        for line in lines {
-            if let Ok(s) = line {
-                // Process each line...
-                line_vec.push(s);
-            }
+        for line in lines.flatten() {
+            // Process each line...
+            line_vec.push(line);
         }
     }
     let line_vec2 = line_vec.to_vec();

@@ -10,7 +10,7 @@ pub mod bingo_grid {
     impl BingoGrid {
         pub fn new(number_grid: [[i32; 5]; 5]) -> BingoGrid {
             BingoGrid { 
-                number_grid: number_grid,
+                number_grid,
                 marked_grid: [[false; 5]; 5],
             }
         }
@@ -57,7 +57,7 @@ pub mod bingo_grid {
 
     impl fmt::Display for BingoGrid {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(f, "Bingo Grid: {:?}\n", self.number_grid)
+            writeln!(f, "Bingo Grid: {:?}", self.number_grid)
         }
     }
 }

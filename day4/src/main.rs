@@ -10,9 +10,9 @@ mod bingo;
 pub use crate::bingo::bingo_grid::BingoGrid;
 
 fn p1(mut bingo_grids: Vec<BingoGrid>, winning_numbers: Vec<i32>) -> i32 {
-    for i in 0..4 {
-        for j in 0..bingo_grids.len() {
-            bingo_grids[j].add_winning_number(winning_numbers[i]);
+    for n in winning_numbers.iter().take(4) {
+        for bingo_grid in &mut bingo_grids {
+            bingo_grid.add_winning_number(*n);
         }
     }
     let (mut i, mut index) = (4, 0);
@@ -20,9 +20,9 @@ fn p1(mut bingo_grids: Vec<BingoGrid>, winning_numbers: Vec<i32>) -> i32 {
     let mut done = false;
     loop {
         current_winning_number = winning_numbers[i];
-        for j in 0..bingo_grids.len() {
-            if bingo_grids[j].add_winning_number(current_winning_number) 
-            && bingo_grids[j].is_bingo() {
+        for (j, bingo_grid) in bingo_grids.iter_mut().enumerate() {
+            if bingo_grid.add_winning_number(current_winning_number) 
+            && bingo_grid.is_bingo() {
                 index = j;
                 done = true;
                 break;
@@ -37,9 +37,9 @@ fn p1(mut bingo_grids: Vec<BingoGrid>, winning_numbers: Vec<i32>) -> i32 {
 }
 
 fn p2(mut bingo_grids: Vec<BingoGrid>, winning_numbers: Vec<i32>) -> i32 {
-    for i in 0..4 {
-        for j in 0..bingo_grids.len() {
-            bingo_grids[j].add_winning_number(winning_numbers[i]);
+    for n in winning_numbers.iter().take(4) {
+        for bingo_grid in &mut bingo_grids {
+            bingo_grid.add_winning_number(*n);
         }
     }
     let mut i = 4;
@@ -47,9 +47,9 @@ fn p2(mut bingo_grids: Vec<BingoGrid>, winning_numbers: Vec<i32>) -> i32 {
     loop {
         current_winning_number = winning_numbers[i];
         let mut indexes_to_remove: Vec<usize> = Vec::new();
-        for j in 0..bingo_grids.len() {
-            if bingo_grids[j].add_winning_number(current_winning_number) 
-            && bingo_grids[j].is_bingo() {
+        for (j, bingo_grid) in bingo_grids.iter_mut().enumerate() {
+            if bingo_grid.add_winning_number(current_winning_number) 
+            && bingo_grid.is_bingo() {
                 indexes_to_remove.push(j);
             }
         }
@@ -87,7 +87,7 @@ fn main() {
         for line in lines {
             if !first_line_done {
                 if let Ok(s) = line {
-                    let s_vec: Vec<i32> = s.split(",").map(|x| x.parse::<i32>().unwrap()).collect();
+                    let s_vec: Vec<i32> = s.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
                     winning_numbers = s_vec.to_vec();
                     first_line_done = true;
                 }
@@ -96,18 +96,20 @@ fn main() {
                 continue;
             } else if let Ok(s) = line {
                 // store bingo grids
-                if s == "" {
+                if s.is_empty() {
                     let new_bingo = BingoGrid::new(bingo_buffer);
                     bingo_grids.push(new_bingo);
                     bingo_buffer = [[0; 5]; 5];
                     current_row = 0;
                     continue;
                 }
-                let s_vec: Vec<i32> = s.split(" ").filter(|&x| x != "")
+                let s_vec: Vec<i32> = s.split(' ').filter(|&x| !x.is_empty())
                         .map(|x| x.parse::<i32>().unwrap()).collect();
-                for i in 0..s_vec.len() {
-                    bingo_buffer[current_row][i] = s_vec[i];
-                }
+                // the line below this for loop replaces it
+                // for i in 0..s_vec.len() {
+                //     bingo_buffer[current_row][i] = s_vec[i];
+                // }
+                bingo_buffer[current_row][..s_vec.len()].clone_from_slice(&s_vec[..]);
                 current_row += 1;
             }
         }

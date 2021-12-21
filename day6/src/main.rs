@@ -19,7 +19,7 @@ fn p1(line_vec: Vec<String>) -> i32 {
         queue.push_back(birthing);
         queue[6] += birthing;
     }
-    queue.iter().fold(0, |x, curr| x + curr) as i32
+    queue.iter().sum::<usize>() as i32
 }
 
 // p1 except I changed everything to i64 and set the number of days to 256
@@ -35,7 +35,7 @@ fn p2(line_vec: Vec<String>) -> i64 {
         queue.push_back(birthing);
         queue[6] += birthing;
     }
-    queue.iter().fold(0, |x, curr| x + curr)
+    queue.iter().sum::<i64>()
 }
 
 fn main() {
@@ -43,11 +43,9 @@ fn main() {
     // let mut str_buf = "".to_owned();
     let mut line_vec: Vec<String> = Vec::new();
     if let Ok(lines) = read_lines(filepath) {
-        for line in lines {
-            if let Ok(s) = line {
-                // Process each line...
-                line_vec.push(s);
-            }
+        for line in lines.flatten() {
+            // Process each line...
+            line_vec.push(line);
         }
     }
     let line_vec2 = line_vec.to_vec();

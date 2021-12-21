@@ -7,9 +7,9 @@ fn p1(line_vec: Vec<String>) -> i32 {
     // log down number of set bits for each bit position
     for entry in line_vec.iter() {
         let mut chars = entry.chars();
-        for i in 0..12 { 
+        for i in &mut set_bit_count { 
             if chars.next() == Some('1') {
-                set_bit_count[i] += 1;
+                *i += 1;
             }
         }
     }
@@ -21,11 +21,11 @@ fn p1(line_vec: Vec<String>) -> i32 {
     let mut delta_str = "".to_owned();
     for b in set_bit_count.iter() {
         if *b > line_vec.len() as i32 / 2 {
-            gamma_str.push_str("1");
-            delta_str.push_str("0");
+            gamma_str.push('1');
+            delta_str.push('0');
         } else {
-            gamma_str.push_str("0");
-            delta_str.push_str("1");
+            gamma_str.push('0');
+            delta_str.push('1');
         }
     }
     let gamma = isize::from_str_radix(&gamma_str, 2).unwrap();
@@ -38,14 +38,14 @@ fn p2(line_vec: Vec<String>) -> i32 {
     let mut curr_vec: Vec<String> = line_vec.to_vec();
     // Solve for O2
     for i in 0..12 {
-        if (count_set_bits(i, curr_vec.to_vec()) as f64) >= curr_vec.len() as f64 / 2 as f64 {
+        if (count_set_bits(i, curr_vec.to_vec()) as f64) >= curr_vec.len() as f64 / 2_f64 {
             curr_vec = filter_vec(curr_vec.to_vec(), i, '1');
         } else {
             curr_vec = filter_vec(curr_vec.to_vec(), i, '0');
         }
         if curr_vec.len() == 1 {
             break;
-        } else if curr_vec.len() == 0 {
+        } else if curr_vec.is_empty() {
             panic!("No solution found");
         }
     }
@@ -54,14 +54,14 @@ fn p2(line_vec: Vec<String>) -> i32 {
     // Solve for CO2
     curr_vec = line_vec.to_vec();
     for i in 0..12 {
-        if (count_set_bits(i, curr_vec.to_vec()) as f64) < curr_vec.len() as f64 / 2 as f64 {
+        if (count_set_bits(i, curr_vec.to_vec()) as f64) < curr_vec.len() as f64 / 2_f64 {
             curr_vec = filter_vec(curr_vec.to_vec(), i, '1');
         } else {
             curr_vec = filter_vec(curr_vec.to_vec(), i, '0');
         }
         if curr_vec.len() == 1 {
             break;
-        } else if curr_vec.len() == 0 {
+        } else if curr_vec.is_empty() {
             panic!("No solution found");
         }
     }
@@ -73,11 +73,8 @@ fn p2(line_vec: Vec<String>) -> i32 {
 fn count_set_bits(n: usize, binary_vec: Vec<String>) -> i32 {
     let mut count = 0;
     for binary_str in binary_vec.iter() {
-        match binary_str.chars().nth(n).unwrap() {
-            '1' => {
-                count += 1;
-            },
-            _ => {}
+        if binary_str.chars().nth(n).unwrap() == '1' {
+            count += 1;
         }
     }
     count
@@ -91,7 +88,7 @@ fn filter_vec(line_vec: Vec<String>, n: usize, c: char) -> Vec<String> {
             filtered_vec.push(entry.to_owned());
         }
     }
-    if filtered_vec.len() == 0 {
+    if filtered_vec.is_empty() {
         return line_vec;
     }
     filtered_vec
@@ -103,11 +100,9 @@ fn main() {
     // let mut str_buf = "".to_owned();
     let mut line_vec: Vec<String> = Vec::new();
     if let Ok(lines) = read_lines(filepath) {
-        for line in lines {
-            if let Ok(s) = line {
+        for line in lines.flatten() {
                 // Process each line...
-                line_vec.push(s);
-            }
+            line_vec.push(line);
         }
     }
     let line_vec2 = line_vec.to_vec();
